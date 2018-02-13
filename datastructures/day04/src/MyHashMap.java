@@ -142,7 +142,7 @@ public class MyHashMap<K, V> implements Map<K, V> {
             bucket.addLast(new Entry(key,value));
             size++;
 
-            if(Math.round(size/buckets.length) > ALPHA) {
+            if(size > ALPHA * buckets.length) {
                 rehash(GROWTH_FACTOR);
             }
         }
@@ -169,7 +169,7 @@ public class MyHashMap<K, V> implements Map<K, V> {
             if(bucket.get(i).getKey().equals(key)) { // Iterate through the LinkedList until the correct Entry is found
                 q = bucket.remove(i); // Return the Value associated with the Entry
                 size--;
-                if(Math.round(size/buckets.length) < BETA) {
+                if(size < BETA * buckets.length && SHRINK_FACTOR * buckets.length >= MIN_BUCKETS) {
                     rehash(SHRINK_FACTOR);
                 }
             }
@@ -195,11 +195,10 @@ public class MyHashMap<K, V> implements Map<K, V> {
         // hint: once you have removed all values from the buckets, use put(k, v) to add them back in the correct place
 
         LinkedList<Entry>[] superBucket = buckets.clone(); // This will store all Entries from buckets while restructuring
-        Arrays.fill(buckets, null); // Effectively deletes buckets array
+        // Arrays.fill(buckets, null); // Effectively deletes buckets array
         size = 0;
 
         int newBuckets = (int) Math.round(superBucket.length * growthFactor);
-        //System.out.println(newBuckets);
         initBuckets(newBuckets);
 
         for(int bucket = 0; bucket < superBucket.length; bucket++) {

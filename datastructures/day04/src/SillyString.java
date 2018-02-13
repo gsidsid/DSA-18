@@ -27,6 +27,12 @@ public class SillyString {
         return total;
     }
 
+    // The hash function here is just the value of the string
+    // This means unless two strings are the exact same, they will each fall into different bins
+    // Also, if the point of a hash code is to identify a unique characteristic of a thing with less data
+    //  this fails, as it doesn't identify anything particularly unique about the string
+    //  so its not actually a hash function.
+
     /**
      * @param args
      */

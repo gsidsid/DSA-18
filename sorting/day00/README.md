@@ -29,7 +29,10 @@ Test your code with `BoomerangTest.java`.
 
 <details> 
   <summary>Hint 1</summary>
-    If you have n points equidistant from point j, then there are n*(n-1) total boomerangs with j at the center. 
+    If you have n points equidistant from point j, then there are n*(n-1) total boomerangs with j at the center.
+
+    find equidistant points from j
+    count eq - > n6
 </details>
 
 <details> 
