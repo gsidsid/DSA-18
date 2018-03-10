@@ -1,3 +1,5 @@
+import javafx.collections.transformation.FilteredList;
+
 import java.util.NoSuchElementException;
 
 
@@ -29,18 +31,29 @@ public class RedBlackTree<T extends Comparable<T>> extends BinarySearchTree<T> {
     // make a left-leaning link lean to the right
     TreeNode<T> rotateRight(TreeNode<T> h) {
         // TODO
-        return h;
+        TreeNode<T> m = h.leftChild;
+        TreeNode<T> beta = m.rightChild;
+        m.rightChild = h;
+        h.leftChild = beta;
+        return m;
     }
 
     // make a right-leaning link lean to the left
     TreeNode<T> rotateLeft(TreeNode<T> h) {
         // TODO
-        return h;
+        TreeNode<T> m = h.rightChild;
+        TreeNode<T> beta = m.leftChild;
+        m.leftChild = h;
+        h.rightChild = beta;
+        return m;
     }
 
     // flip the colors of a TreeNode and its two children
     TreeNode<T> flipColors(TreeNode<T> h) {
         // TODO
+        h.leftChild.color = BLACK;
+        h.rightChild.color = BLACK;
+        h.color = RED;
         return h;
     }
 
@@ -54,6 +67,28 @@ public class RedBlackTree<T extends Comparable<T>> extends BinarySearchTree<T> {
      */
     private TreeNode<T> balance(TreeNode<T> h) {
         // TODO
+
+        if (isRed(h.rightChild) && !isRed(h.leftChild)) {
+            h = rotateLeft(h);
+
+            boolean tmpColor = h.color;
+            h.color = h.leftChild.color;
+            h.leftChild.color = tmpColor;
+
+        }
+
+        if( isRed(h.leftChild) && isRed(h.leftChild.leftChild)) {
+            h = rotateRight(h);
+
+            h.leftChild.color = RED;
+            h.rightChild.color = RED;
+            h.color = BLACK;
+        }
+
+        if(isRed(h.leftChild) && isRed(h.rightChild)) {
+            flipColors(h);
+        }
+
         return h;
     }
 
@@ -65,15 +100,14 @@ public class RedBlackTree<T extends Comparable<T>> extends BinarySearchTree<T> {
     @Override
     TreeNode<T> insert(TreeNode<T> h, T key) {
         h = super.insert(h, key);
-        // TODO: use balance to correct for the three rotation cases
-        return h;
+        // TODO: use balance to correct for the three rotation cases]
+        return balance(h);
     }
 
 
     // ====================================
     //            Deletion Code
     // ====================================
-
 
     /**
      * Removes the specified key from the tree
@@ -108,6 +142,7 @@ public class RedBlackTree<T extends Comparable<T>> extends BinarySearchTree<T> {
         // OPTIONAL TODO: write this function and use it in delete(h, key)
         return h;
     }
+
     // delete the key-value pair with the given key rooted at h
     TreeNode<T> delete(TreeNode<T> h, T key) {
         // OPTIONAL TODO

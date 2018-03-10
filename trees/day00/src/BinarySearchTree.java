@@ -1,3 +1,7 @@
+import jdk.nashorn.api.tree.Tree;
+
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class BinarySearchTree<T extends Comparable<T>> {
@@ -29,7 +33,28 @@ public class BinarySearchTree<T extends Comparable<T>> {
 
     public List<T> inOrderTraversal() {
         // TODO
-        return null;
+        List<T> res = new ArrayList<>();
+
+        TreeNode<T> locRoot = root;
+
+        while(findPredecessor(locRoot) != null) {
+
+            locRoot = findPredecessor(locRoot);
+
+        }
+
+        if( locRoot != null ) {
+            res.add(locRoot.key);
+        }
+
+        while(findSuccessor(locRoot) != null) {
+
+            locRoot = findSuccessor(locRoot);
+            res.add(locRoot.key);
+
+        }
+
+        return res;
     }
 
     /**
@@ -56,7 +81,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
         // Recursive base case
         if (n == null) return null;
 
-        TreeNode<T> replacement;
+        TreeNode<T> replacement = null;
 
         if (n.isLeaf())
             // Case 1: no children
@@ -66,13 +91,17 @@ public class BinarySearchTree<T extends Comparable<T>> {
             replacement = (n.hasRightChild()) ? n.rightChild : n.leftChild; // replacement is the non-null child
         else {
             // Case 3: two children
-            // TODO
-            replacement = null;
+            // TODO:
+
+            replacement = findSuccessor(n);
+            delete(replacement);
+            replacement.moveChildrenFrom(n);
         }
 
-        // Put the replacement in its correct place, and set the parent.
-        n.replaceWith(replacement);
-        return replacement;
+            // Put the replacement in its correct place, and set the parent.
+            n.replaceWith(replacement);
+            return replacement;
+
     }
 
     public T findPredecessor(T key) {
@@ -97,13 +126,64 @@ public class BinarySearchTree<T extends Comparable<T>> {
 
     private TreeNode<T> findPredecessor(TreeNode<T> n) {
         // TODO
-        return null;
+
+        if(root == null) {
+
+            return null;
+
+        } else if ( n.hasLeftChild() ){
+
+            n = n.leftChild;
+            while(n.hasRightChild()) {
+                n = n.rightChild;
+            }
+            return n;
+
+        } else {
+
+            while (!(n.isRightChild())) {
+
+                if(n.equals(root)) {
+                    return null;
+                }
+                n = n.parent;
+            }
+
+            return n.parent;
+
+        }
+
     }
 
     private TreeNode<T> findSuccessor(TreeNode<T> n) {
         // TODO
-        return null;
+        if(root == null) {
+
+            return null;
+
+        } else if ( n.hasRightChild() ){
+
+            n = n.rightChild;
+            while(n.hasLeftChild()) {
+                n = n.leftChild;
+            }
+            return n;
+
+        } else {
+
+            while (!(n.isLeftChild())) {
+                if(n.equals(root)) {
+                    return null;
+                }
+                n = n.parent;
+            }
+
+            return n.parent;
+
+        }
+
     }
+
 
     /**
      * Returns a node with the given key in the BST, or null if it doesn't exist.
