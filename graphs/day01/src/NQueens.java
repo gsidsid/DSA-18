@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class NQueens {
@@ -48,11 +49,44 @@ public class NQueens {
         return B;
     }
 
+    public static char[][] makeBoard(int n) {
+        char[][] board = new char[n][n];
+        for( int row = 0; row < board.length; row++ ) {
+            for( int col = 0; col < board[0].length; col++ ) {
+                board[row][col] = '.';
+            }
+        }
+        return board;
+    }
 
     public static List<char[][]> nQueensSolutions(int n) {
         // TODO
         List<char[][]> answers = new ArrayList<>();
+        char[][] currBoard = makeBoard(n);
+        boolean[] openCols = new boolean[n];
+        for( int i = 0; i < openCols.length; i++ ) {
+            openCols[i] = true;
+        }
+        solveNQueens(currBoard,0,openCols,answers);
         return answers;
+    }
+
+    public static void solveNQueens(char[][] board, int row, boolean[] openCols, List<char[][]> sols) {
+        if( row >= board[0].length ) {
+            sols.add(board);
+        } else {
+            for (int i = 0; i < openCols.length; i ++) {
+                if(openCols[i]) {
+                    char[][] newBoard = copyOf(board);
+                    newBoard[row][i] = 'Q';
+                    if(!checkDiagonal(newBoard,row,i)) {
+                        openCols[i] = false;
+                        solveNQueens(newBoard, row + 1, openCols, sols);
+                        openCols[i] = true;
+                    }
+                }
+            }
+        }
     }
 
 }
