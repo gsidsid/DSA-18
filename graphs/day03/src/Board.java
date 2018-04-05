@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,13 +12,15 @@ public class Board {
 
     //TODO
     // Create a 2D array representing the solved board state
-    private int[][] goal = {{}};
+    private int[][] goal = {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
 
     /*
      * Set the global board size and tile state
      */
     public Board(int[][] b) {
         // TODO: Your code here
+        this.tiles = b;
+        this.n = b[0].length;
     }
 
     /*
@@ -26,7 +29,7 @@ public class Board {
      */
     private int size() {
         // TODO: Your code here
-        return 0;
+        return n;
     }
 
     /*
@@ -34,7 +37,23 @@ public class Board {
      */
     public int manhattan() {
         // TODO: Your code here
-        return 0;
+        int sum = 0;
+        int val;
+        int target_row;
+        int target_col;
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                val = tiles[i][j];
+                if (val != 0) {
+                    target_row = (val-1)%n;
+                    target_col = (val-1)/n;
+                    sum = sum + (Math.abs(j-target_row) + Math.abs(i-target_col));
+                }
+            }
+        }
+
+        return sum;
     }
 
     /*
@@ -42,13 +61,27 @@ public class Board {
      */
     public boolean isGoal() {
         // TODO: Your code here
-        return false;
+        return Arrays.deepEquals(tiles, goal);
     }
 
     /*
      * Returns true if the board is solvable
      * Research how to check this without exploring all states
      */
+
+    /*
+      * Helper function to get number of inversions in board state
+    */
+
+    private int inversions() {
+        for (int i = 0; i < size()*size() - 1; i++) {
+            for (int j = 0; j < size()*size() - 1; j++) {
+
+            }
+
+        }
+    }
+
     public boolean solvable() {
         // TODO: Your code here
         return false;

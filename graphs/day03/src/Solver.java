@@ -44,7 +44,12 @@ public class Solver {
      */
     private State root(State state) {
         // TODO: Your code here
-        return null;
+        if(state != null) {
+            while(state.prev != null) {
+                return root(state.prev);
+            }
+        }
+        return state;
     }
 
     /*
@@ -87,6 +92,13 @@ public class Solver {
      */
     public static void main(String[] args) {
         int[][] initState = {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
+        int[][] w = {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
+
+        if (Arrays.deepEquals(initState, w))
+        {
+            System.out.println("hidhih");
+        }
+
         Board initial = new Board(initState);
 
         Solver solver = new Solver(initial);
