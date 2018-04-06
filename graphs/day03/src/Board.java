@@ -61,7 +61,7 @@ public class Board {
      */
     public boolean isGoal() {
         // TODO: Your code here
-        return Arrays.deepEquals(tiles, goal);
+        return tiles.equals(goal);
     }
 
     /*
@@ -69,22 +69,46 @@ public class Board {
      * Research how to check this without exploring all states
      */
 
+
     /*
       * Helper function to get number of inversions in board state
     */
 
     private int inversions() {
-        for (int i = 0; i < size()*size() - 1; i++) {
-            for (int j = 0; j < size()*size() - 1; j++) {
+        int[] flat = new int[size()*size() - 1];
 
+        int a = 0;
+        for (int i = 0; i < size(); i++) {
+            for (int j = 0; j < size(); j++) {
+                flat[a] = tiles[i][j];
+                a++;
             }
-
         }
+
+        int inver_count = 0;
+        for (int i = 0; i < size()*size(); i++) {
+            for (int j = i + 1; j < size()*size(); j++) {
+                if (flat[j] != 0 && flat[i] != 0 && flat[i] > flat[j])
+                {
+                    inver_count++;
+                }
+            }
+        }
+        return inver_count;
+
     }
 
     public boolean solvable() {
         // TODO: Your code here
-        return false;
+        int inversions = inversions();
+        if (inversions % 2 == 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     /*
