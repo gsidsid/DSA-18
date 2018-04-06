@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -80,19 +81,130 @@ public class Board {
             }
 
         }
+        return 0;
     }
 
     public boolean solvable() {
-        // TODO: Your code here
         return false;
     }
 
+    public Board swap(int r, int c, String dir) {
+        int temp;
+        int[][] newtiles = this.tiles.clone();
+        Board b_new = new Board(newtiles);
+
+        if (dir.equals("r")) {
+            temp = b_new.tiles[r][c];
+            b_new.tiles[r][c] = b_new.tiles[r][c+1];
+            b_new.tiles[r][c+1] = temp;
+        } else if (dir.equals("l")) {
+            temp = b_new.tiles[r][c];
+            b_new.tiles[r][c] = b_new.tiles[r][c-1];
+            b_new.tiles[r][c-1] = temp;
+        } else if (dir.equals("u")) {
+            temp = b_new.tiles[r][c];
+            b_new.tiles[r][c] = b_new.tiles[r-1][c];
+            b_new.tiles[r-1][c] = temp;
+        } else if (dir.equals("d")) {
+            temp = b_new.tiles[r][c];
+            b_new.tiles[r][c] = b_new.tiles[r+1][c];
+            b_new.tiles[r+1][c] = temp;
+        }
+        return b_new;
+    }
+
+    private int[][] deepCopy2D(int[][] curr) {
+        int[][] next = new int[curr.length][curr[0].length];
+        for (int x = 0; x < curr.length; x++) {
+            for (int y = 0; y < curr[0].length; y++) {
+                if (curr[x][y] != 0)//write only when necessary
+                {
+                    next[x][y] = curr[x][y];
+                }
+            }
+        }
+        return next;
+    }
+
+    public List<Board> trySwaps(int erow, int ecol, String[] dirs) {
+        List<Board> steps = new ArrayList<>();
+        for (String dir : dirs) {
+            if (dir.equals("u")) {
+                this.swap(erow, ecol, "u");
+                steps.add(new Board(deepCopy2D(this.tiles)));
+                this.swap(erow-1, ecol, "d");
+            } else if (dir.equals("d")) {
+                this.swap(erow, ecol, "d");
+                steps.add(new Board(deepCopy2D(this.tiles)));
+                this.swap(erow+1, ecol, "u");
+            } else if (dir.equals("l")) {
+                this.swap(erow, ecol, "l");
+                steps.add(new Board(deepCopy2D(this.tiles)));
+                this.swap(erow, ecol-1, "r");
+            } else {
+                this.swap(erow, ecol, "r");
+                steps.add(new Board(deepCopy2D(this.tiles)));
+                this.swap(erow, ecol+1, "l");
+            }
+        }
+        return steps;
+    }
     /*
      * Return all neighboring boards in the state tree
      */
     public Iterable<Board> neighbors() {
         // TODO: Your code here
-        return null;
+        List<Board> neighbors = new ArrayList<>();
+
+        int erow = 0;
+        int ecol = 0;
+        for(int i = 0; i < tiles.length; i ++) {
+            for(int j = 0; j < tiles[0].length; j ++) {
+                if(tiles[i][j] == 0) {
+                    erow = i;
+                    ecol = j;
+                }
+            }
+        }
+
+        String[] makeSwaps;
+
+        if((erow==0 || erow==(n-1)) && (ecol==0 || ecol==(n-1))) { //CORNER
+
+            if (erow == 0 && ecol == 0) {
+                makeSwaps = new String[]{"r", "d"};
+            } else if (erow == 0 && ecol == (n-1)) {
+                makeSwaps = new String[]{"l", "d"};
+            } else if (erow == (n-1) && ecol == 0) {
+                makeSwaps = new String[]{"r", "u"};
+            } else {
+                makeSwaps = new String[]{"l", "u"};
+            }
+
+            neighbors.addAll(trySwaps(erow, ecol, makeSwaps));
+
+        } else if ((erow==0 || erow==(n-1)) || (ecol==0 || ecol==(n-1))) { //EDGE
+
+            if ( erow == 0 ) {
+                makeSwaps = new String[]{"d", "l", "r"};
+            } else if ( erow == (n-1) ){
+                makeSwaps = new String[]{"u", "l", "r"};
+            } else if ( ecol == 0) {
+                makeSwaps = new String[]{"u", "d", "r"};
+            } else {
+                makeSwaps = new String[]{"u", "d", "l"};
+            }
+
+            neighbors.addAll(trySwaps(erow, ecol, makeSwaps));
+
+        } else { //MIDDLE
+
+            makeSwaps = new String[]{"u", "d", "l", "r"};
+            neighbors.addAll(trySwaps(erow, ecol, makeSwaps));
+
+        }
+
+        return neighbors;
     }
 
     /*
@@ -122,7 +234,7 @@ public class Board {
 
     public static void main(String[] args) {
         // DEBUG - Your solution can include whatever output you find useful
-        int[][] initState = {{1, 2, 3}, {4, 0, 6}, {7, 8, 5}};
+        int[][] initState = {{0, 2, 3}, {1, 4, 6}, {7, 8, 5}};
         Board board = new Board(initState);
 
         System.out.println("Size: " + board.size());
@@ -130,6 +242,10 @@ public class Board {
         System.out.println("Manhattan: " + board.manhattan());
         System.out.println("Is goal: " + board.isGoal());
         System.out.println("Neighbors:");
+
         Iterable<Board> it = board.neighbors();
+        for (Board b : it) {
+            System.out.println(Arrays.deepToString(b.tiles));
+        }
     }
 }
